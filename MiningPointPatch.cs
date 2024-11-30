@@ -1,65 +1,94 @@
-﻿using HarmonyLib;
+﻿using BepInEx.Configuration;
+using HarmonyLib;
 
 namespace RF5_FastMining;
 
 [HarmonyPatch(typeof(MiningPoint), nameof(MiningPoint.DoBreak))]
-public class MiningPointDoBreak
+internal static class MiningPointDoBreak
 {
     private static int counter = 0;
+    private const string FastMiningSection = "FastMining";
+    internal static ConfigEntry<int> BreakCount { get; private set; }
+    private static int GameDefault = 1;
+    private static int ModDefault = 9;
+    private static readonly ConfigDescription BreakCountDescription = new ConfigDescription(
+        $"Set to desired rock break hits . {Environment.NewLine} 1 = Mod Disabled/Game default, > 1 = number of hits to register",
+        new AcceptableValueRange<int>(GameDefault, 10));
 
-    static void Prefix()
+    internal static void LoadConfig(ConfigFile Config)
     {
-        ++counter;
+        BreakCount = Config.Bind(FastMiningSection, nameof(BreakCount), ModDefault, BreakCountDescription);
     }
 
-    static void Postfix(HumanController humanController, MiningPoint __instance)
+    internal static void Postfix(HumanController humanController, MiningPoint __instance)
     {
-        if (counter == 1){
-            Main.Logger.LogDebug($"MiningPoint.DoBreak {__instance.mineType} {__instance.mineTypeDataTable.HP} {__instance.cropDataTable.CropHP}");
-        }
-
-        if (__instance.mineType == MineTypeID.Mine_Runecrystal ||
-            counter >= Main.Config.GetInt("FastMining", "BreakCount", 9))
+        if (BreakCount.Value == GameDefault)
         {
-            --counter;
             return;
         }
 
-        if (__instance.mineTypeDataTable.HP > 0 || __instance.cropDataTable.CropHP > 0){
+        counter++;
+        if (counter == GameDefault)
+        {
+            Main.Logger.LogDebug($"MiningPoint.DoBreak {__instance.mineType} {__instance.mineTypeDataTable.HP} {__instance.cropDataTable.CropHP}");
+        }
+
+        if (__instance.mineType == MineTypeID.Mine_Runecrystal || counter >= BreakCount.Value)
+        {
+            counter--;
+            return;
+        }
+
+        if (__instance.mineTypeDataTable.HP > 0 || __instance.cropDataTable.CropHP > 0)
+        {
             __instance.DoBreak(humanController);
         }
 
-        --counter;
+        counter--;
     }
 }
 
 [HarmonyPatch(typeof(MiningPoint), nameof(MiningPoint.DoChop))]
-public class MiningPointDoChop
+internal static class MiningPointDoChop
 {
     private static int counter = 0;
+    private const string FastChoppingSection = "FastChopping";
+    internal static ConfigEntry<int> ChopCount { get; private set; }
+    private static int GameDefault = 1;
+    private static int ModDefault = 9;
+    private static readonly ConfigDescription ChopCountDescription = new ConfigDescription(
+    $"Set to desired tree break hits . {Environment.NewLine} 1 = Mod Disabled/Game default, > 1 = number of hits to register",
+    new AcceptableValueRange<int>(GameDefault, 10));
 
-    static void Prefix()
+    internal static void LoadConfig(ConfigFile Config)
     {
-        ++counter;
+        ChopCount = Config.Bind(FastChoppingSection, nameof(ChopCount), ModDefault, ChopCountDescription);
     }
 
-    static void Postfix(HumanController humanController, MiningPoint __instance)
+    internal static void Postfix(HumanController humanController, MiningPoint __instance)
     {
-        if (counter == 1){
-            Main.Logger.LogDebug($"MiningPoint.DoChop {__instance.mineType} {__instance.mineTypeDataTable.HP} {__instance.cropDataTable.CropHP}");
-        }
-
-        if (__instance.mineType == MineTypeID.Mine_Flower ||
-            counter >= Main.Config.GetInt("FastMining", "ChopCount", 9))
+        if (ChopCount.Value == GameDefault)
         {
-            --counter;
             return;
         }
 
-        if (__instance.mineTypeDataTable.HP > 0 || __instance.cropDataTable.CropHP > 0){
+        counter++;
+        if (counter == GameDefault)
+        {
+            Main.Logger.LogDebug($"MiningPoint.DoChop {__instance.mineType} {__instance.mineTypeDataTable.HP} {__instance.cropDataTable.CropHP}");
+        }
+
+        if (__instance.mineType == MineTypeID.Mine_Flower || counter >= ChopCount.Value)
+        {
+            counter--;
+            return;
+        }
+
+        if (__instance.mineTypeDataTable.HP > 0 || __instance.cropDataTable.CropHP > 0)
+        {
             __instance.DoChop(humanController);
         }
 
-        --counter;
+        counter--;
     }
 }
