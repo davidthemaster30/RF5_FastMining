@@ -6,18 +6,13 @@ using BepInEx.Unity.IL2CPP;
 
 namespace RF5_FastMining;
 
-[BepInPlugin(GUID, NAME, VERSION)]
+[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInProcess(GAME_PROCESS)]
 public class Main : BasePlugin
 {
-    #region PluginInfo
-    private const string GUID = "RF5_FastMining";
-    private const string NAME = "RF5_FastMining";
-    private const string VERSION = "1.1.0";
     private const string GAME_PROCESS = "Rune Factory 5.exe";
-    #endregion
 
-    internal static readonly ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource("RF5_FastMining");
+    internal static new readonly ManualLogSource Log = BepInEx.Logging.Logger.CreateLogSource("RF5_FastMining");
 
     internal void LoadConfig()
     {
@@ -27,9 +22,12 @@ public class Main : BasePlugin
 
     public override void Load()
     {
+        Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_NAME} {MyPluginInfo.PLUGIN_VERSION} is loading!");
+
         LoadConfig();
         Harmony.CreateAndPatchAll(typeof(MiningPointDoChop));
         Harmony.CreateAndPatchAll(typeof(MiningPointDoBreak));
-        Logger.LogInfo($"Plugin {NAME} is loaded!");
+
+        Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_NAME} {MyPluginInfo.PLUGIN_VERSION} is loaded!");
     }
 }
