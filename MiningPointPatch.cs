@@ -30,7 +30,7 @@ internal static class MiningPointDoBreak
         counter++;
         if (counter == GameDefault)
         {
-            Main.Logger.LogDebug($"MiningPoint.DoBreak {__instance.mineType} {__instance.mineTypeDataTable.HP} {__instance.cropDataTable.CropHP}");
+            FastMiningPlugin.Log.LogDebug($"MiningPoint.DoBreak {__instance.mineType} {__instance.mineTypeDataTable.HP} {__instance.cropDataTable.CropHP}");
         }
 
         if (__instance.mineType == MineTypeID.Mine_Runecrystal || counter >= BreakCount.Value)
@@ -75,7 +75,7 @@ internal static class MiningPointDoChop
         counter++;
         if (counter == GameDefault)
         {
-            Main.Logger.LogDebug($"MiningPoint.DoChop {__instance.mineType} {__instance.mineTypeDataTable.HP} {__instance.cropDataTable.CropHP}");
+            FastMiningPlugin.Log.LogDebug($"MiningPoint.DoChop {__instance.mineType} {__instance.mineTypeDataTable.HP} {__instance.cropDataTable.CropHP}");
         }
 
         if (__instance.mineType == MineTypeID.Mine_Flower || counter >= ChopCount.Value)

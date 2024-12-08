@@ -8,7 +8,7 @@ namespace RF5_FastMining;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInProcess(GAME_PROCESS)]
-public class Main : BasePlugin
+public class FastMiningPlugin : BasePlugin
 {
     private const string GAME_PROCESS = "Rune Factory 5.exe";
 
